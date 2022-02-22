@@ -28,10 +28,9 @@ def built_DADP_parser():
     parser.add_argument('--algorithm_mode', default='ADP', help='ADP')
     parser.add_argument('--max_iteration', type=int, default=3000)
     # number_init_state
-    parser.add_argument('--num_state', type=int, default=300)
+    parser.add_argument('--num_state', type=int, default=30)
     # learner
-
-    parser.add_argument('--prediction_horizon', type=int, default=60)
+    parser.add_argument('--prediction_horizon', type=int, default=30)
     parser.add_argument('--gradient_clip_norm', type=float, default=3)
     # tester and evaluator
     parser.add_argument('--num_eval_episode', type=int, default=5)
@@ -41,10 +40,10 @@ def built_DADP_parser():
     parser.add_argument('--act_dim', type=int, default=1)
     parser.add_argument('--policy_model_cls', type=str, default='MLP')
     parser.add_argument('--policy_num_hidden_layers', type=int, default=2)
-    parser.add_argument('--policy_num_hidden_units', type=int, default=256)
+    parser.add_argument('--policy_num_hidden_units', type=int, default=64)
     parser.add_argument('--policy_hidden_activation', type=str, default='elu')
     parser.add_argument('--policy_out_activation', type=str, default='tanh')
-    parser.add_argument('--policy_lr_schedule', type=list, default=3e-4)
+    parser.add_argument('--policy_lr_schedule', type=list, default=3e-5)
     # preprocessor
     # 为将状态量对reward的影响拉到同一维度，做归一化处理。
     # delta_v_xs, v_ys, rs, delta_ys, delta_phis, xs
@@ -77,11 +76,13 @@ def main():
 
         if args.code_mode == 'train':
             ini = Init_state(args.num_state)
-            train_set_obs, train_set_full_state = ini.reset()
-            learner.get_batch_data(train_set_obs, train_set_full_state)
+            train_set_obs = ini.reset()
+            learner.get_batch_data(train_set_obs)
             start_time = time.time()
             for ite in range(args.max_iteration):
                 policy_loss = learner.policy_forward_and_backward()
+                # if ite == 5:
+                #     exit()
                 print('policy_loss = ', policy_loss)
                 with summary_writer.as_default():
                     tf.summary.scalar('loss', policy_loss, ite, None)

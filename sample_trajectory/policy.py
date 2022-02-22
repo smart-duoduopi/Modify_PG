@@ -1,15 +1,6 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-# =====================================
-# @Time    : 2020/8/10
-# @Author  : Yang Guan (Tsinghua Univ.)
-# @FileName: policy.py
-# =====================================
-
 import tensorflow as tf
 
-from model import MLPNet
+from sample_trajectory.model import MLPNet
 
 NAME2MODELCLS = dict([('MLP', MLPNet)])
 
