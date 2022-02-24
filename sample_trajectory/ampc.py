@@ -23,15 +23,21 @@ class AMPCLearner(object):
     def model_rollout_for_policy_update(self, start_obses):
         self.model.reset(start_obses)
         rewards_sum = self.tf.zeros((start_obses.shape[0],))
-        obses_scale = start_obses[:, 0:4]
+        # print('start_obses = ', start_obses)
+        # obses_scale = start_obses
         for _ in range(self.args.prediction_horizon):
-            obses_scale = obses_scale * self.args.obs_scale
+            # print('obses_scale = ', obses_scale)
+            obses_scale = start_obses * self.args.obs_scale
             actions = self.policy_with_value.compute_action(obses_scale)
             obses, rewards = self.model.rollout_out(actions)
+            # print('reward = ', rewards_sum)
             rewards_sum += rewards
+
             obses_scale = obses[:, 0:4]
+        # print('##########################')
             # obses 是 v_y, r, delta_y, delta_phi
-        policy_loss = - self.tf.reduce_mean(rewards_sum)
+        # exit()
+        policy_loss = self.tf.reduce_mean(rewards_sum)
         return policy_loss
 
 
@@ -45,7 +51,7 @@ class AMPCLearner(object):
             policy_loss = self.model_rollout_for_policy_update(mb_obs)
         with self.tf.name_scope('policy_gradient') as scope: # 用于tensorboard可视化时，将部分底层的模块归结于一个里面。类似于simulink中的可视化的美化功能。为了不那么凌乱
             policy_gradient = tape.gradient(policy_loss, self.policy_with_value.policy.trainable_weights)# 这里的policy是model.py函数中的MLPNet
-        policy_gradient, policy_gradient_norm = self.tf.clip_by_global_norm(policy_gradient,
-                                                                            self.args.gradient_clip_norm)
+        # policy_gradient, policy_gradient_norm = self.tf.clip_by_global_norm(policy_gradient,
+        #                                                                     self.args.gradient_clip_norm)
         self.policy_with_value.apply_gradients(policy_gradient)
         return policy_loss

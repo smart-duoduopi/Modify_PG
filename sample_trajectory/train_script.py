@@ -28,9 +28,9 @@ def built_DADP_parser():
     parser.add_argument('--algorithm_mode', default='ADP', help='ADP')
     parser.add_argument('--max_iteration', type=int, default=3000)
     # number_init_state
-    parser.add_argument('--num_state', type=int, default=30)
+    parser.add_argument('--num_state', type=int, default=3)
     # learner
-    parser.add_argument('--prediction_horizon', type=int, default=30)
+    parser.add_argument('--prediction_horizon', type=int, default=10)
     parser.add_argument('--gradient_clip_norm', type=float, default=3)
     # tester and evaluator
     parser.add_argument('--num_eval_episode', type=int, default=5)
@@ -43,11 +43,11 @@ def built_DADP_parser():
     parser.add_argument('--policy_num_hidden_units', type=int, default=64)
     parser.add_argument('--policy_hidden_activation', type=str, default='elu')
     parser.add_argument('--policy_out_activation', type=str, default='tanh')
-    parser.add_argument('--policy_lr_schedule', type=list, default=3e-5)
+    parser.add_argument('--policy_lr_schedule', type=list, default=1e-5)
     # preprocessor
     # 为将状态量对reward的影响拉到同一维度，做归一化处理。
     # delta_v_xs, v_ys, rs, delta_ys, delta_phis, xs
-    parser.add_argument('--obs_scale', type=list, default=[2., 1., 0.5, 1.])
+    parser.add_argument('--obs_scale', type=list, default=[0.3, 1., 0.5, 1.])
     # 否则有的状态数值很大，对训练以及评估存在问题
     # # parser.add_argument('--obs_scale', type=list, default=[1., 1., 2., 1., 2.4, 1/120])
     # parser.add_argument('--obs_scale', type=list, default=[0.5, 2., 1., 0.5, 1., 1 / 108])
@@ -75,14 +75,16 @@ def main():
         learner = AMPCLearner(PolicyWithQs, args=args)
 
         if args.code_mode == 'train':
-            ini = Init_state(args.num_state)
-            train_set_obs = ini.reset()
+            # ini = Init_state(args.num_state)
+            # train_set_obs = ini.reset()
+            # np.save('train_set.npy', train_set_obs)
+            # print(train_set_obs)
+            # exit()
+            train_set_obs = np.load('train_set.npy')
             learner.get_batch_data(train_set_obs)
             start_time = time.time()
             for ite in range(args.max_iteration):
                 policy_loss = learner.policy_forward_and_backward()
-                # if ite == 5:
-                #     exit()
                 print('policy_loss = ', policy_loss)
                 with summary_writer.as_default():
                     tf.summary.scalar('loss', policy_loss, ite, None)
