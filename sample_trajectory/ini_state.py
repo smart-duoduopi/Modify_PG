@@ -26,5 +26,5 @@ class Init_state(object):
         beta = np.random.normal(0, 0.05, (self.num_agent,)).astype(np.float32)
         init_v_y = (init_delta_v_x + self.expect_v) * np.tan(beta) #vy \in [0, 3]
         init_r = np.random.normal(0, 0.3, (self.num_agent,)).astype(np.float32)  # r \in [-1, 1]
-        self.obs = np.stack([init_v_y, init_r, init_delta_y, init_delta_phi], 1)
+        self.obs = np.stack([init_v_y, init_r, init_delta_y, init_delta_phi, init_x], 1)
         return self.obs

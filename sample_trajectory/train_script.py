@@ -26,11 +26,11 @@ def built_DADP_parser():
     # mode
     parser.add_argument('--code_mode', default='train', help='train or evaluate')
     parser.add_argument('--algorithm_mode', default='ADP', help='ADP')
-    parser.add_argument('--max_iteration', type=int, default=3000)
+    parser.add_argument('--max_iteration', type=int, default=1000)
     # number_init_state
-    parser.add_argument('--num_state', type=int, default=3)
+    parser.add_argument('--num_state', type=int, default=300)
     # learner
-    parser.add_argument('--prediction_horizon', type=int, default=10)
+    parser.add_argument('--prediction_horizon', type=int, default=60)
     parser.add_argument('--gradient_clip_norm', type=float, default=3)
     # tester and evaluator
     parser.add_argument('--num_eval_episode', type=int, default=5)
@@ -76,12 +76,12 @@ def main():
 
         if args.code_mode == 'train':
             # ini = Init_state(args.num_state)
-            # train_set_obs = ini.reset()
-            # np.save('train_set.npy', train_set_obs)
-            # print(train_set_obs)
+            # train_set_obs_x = ini.reset()
+            # np.save('train_set.npy', train_set_obs_x)
+            # print('success')
             # exit()
-            train_set_obs = np.load('train_set.npy')
-            learner.get_batch_data(train_set_obs)
+            train_set_obs_x = np.load('train_set.npy')
+            learner.get_batch_data(train_set_obs_x)
             start_time = time.time()
             for ite in range(args.max_iteration):
                 policy_loss = learner.policy_forward_and_backward()
@@ -93,10 +93,10 @@ def main():
             end_time = time.time()
             print('time = ', end_time - start_time, 's')
         elif args.code_mode == 'evaluate':
-            ini = Init_state(args.num_state)
-            train_set, train_set_full_state = ini.reset()
-            learner.policy_with_value.load_weights('../adp/results/experiment-2022-02-09-20-34-33/models', 2999)
-            evaluation(args, learner.policy_with_value.policy, train_set, train_set_full_state, True)
+            # ini = Init_state(args.num_state
+            train_set = np.load('train_set.npy')
+            learner.policy_with_value.load_weights('../adp/results/experiment-2022-02-24-22-40-14/models', 999)
+            evaluation(args, learner.policy_with_value.policy, train_set, True)
 
 
 if __name__ == '__main__':
