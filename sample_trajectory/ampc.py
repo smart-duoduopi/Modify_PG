@@ -30,7 +30,7 @@ class AMPCLearner(object):
             actions = self.policy_with_value.compute_action(obses_scale)
             obses_scale, obses, rewards = self.model.rollout_out(actions)
             rewards_sum += rewards
-
+        print('obses_scale = ', obses_scale)
         policy_loss = self.tf.reduce_mean(rewards_sum)
         return policy_loss
 

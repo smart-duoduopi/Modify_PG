@@ -24,13 +24,13 @@ tf.config.threading.set_intra_op_parallelism_threads(1)
 def built_DADP_parser():
     parser = argparse.ArgumentParser()
     # mode
-    parser.add_argument('--code_mode', default='train', help='train or evaluate')
+    parser.add_argument('--code_mode', default='evaluate', help='train or evaluate')
     parser.add_argument('--algorithm_mode', default='ADP', help='ADP')
-    parser.add_argument('--max_iteration', type=int, default=1000)
+    parser.add_argument('--max_iteration', type=int, default=3000)
     # number_init_state
-    parser.add_argument('--num_state', type=int, default=300)
+    parser.add_argument('--num_state', type=int, default=500)
     # learner
-    parser.add_argument('--prediction_horizon', type=int, default=60)
+    parser.add_argument('--prediction_horizon', type=int, default=100)
     parser.add_argument('--gradient_clip_norm', type=float, default=3)
     # tester and evaluator
     parser.add_argument('--num_eval_episode', type=int, default=5)
@@ -40,7 +40,7 @@ def built_DADP_parser():
     parser.add_argument('--act_dim', type=int, default=1)
     parser.add_argument('--policy_model_cls', type=str, default='MLP')
     parser.add_argument('--policy_num_hidden_layers', type=int, default=2)
-    parser.add_argument('--policy_num_hidden_units', type=int, default=64)
+    parser.add_argument('--policy_num_hidden_units', type=int, default=256)
     parser.add_argument('--policy_hidden_activation', type=str, default='elu')
     parser.add_argument('--policy_out_activation', type=str, default='tanh')
     parser.add_argument('--policy_lr_schedule', type=list, default=1e-5)
@@ -95,7 +95,7 @@ def main():
         elif args.code_mode == 'evaluate':
             # ini = Init_state(args.num_state
             train_set = np.load('train_set.npy')
-            learner.policy_with_value.load_weights('../adp/results/experiment-2022-02-24-22-40-14/models', 999)
+            learner.policy_with_value.load_weights('../adp/results/experiment-2022-02-25-12-46-33/models', 2999)
             evaluation(args, learner.policy_with_value.policy, train_set, True)
 
 

@@ -55,7 +55,7 @@ class VehicleDynamics(object):
             devi_y = tf.square(delta_ys)  # distence between current point and clostest point
             devi_phi = tf.square(delta_phis)
             punish_yaw_rate = tf.square(rs)
-            rewards = 0.4 * devi_y + 0.1 * devi_phi + 0.2 * punish_yaw_rate + 0.5 * punish_steer
+            rewards = 2 * devi_y + 1 * devi_phi + 0.2 * punish_yaw_rate + 0.5 * punish_steer
         return rewards
 
 
