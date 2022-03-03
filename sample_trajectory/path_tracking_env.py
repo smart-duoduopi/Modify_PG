@@ -22,6 +22,12 @@ class VehicleDynamics(object):
                            [0.0703, 0.0171, 1, 2],
                            [0.0018, 0.0523, 0, 1]])
         self.B = np.array([[2.0350], [4.8124], [0.4046], [0.2952]])
+        self.Q = np.array([[1, 0, 0, 0],
+                           [0, 1, 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, 1]])
+        self.R = np.array([[1]])
+
 
     def f_xu(self, states, actions):
         # for left turning task the delta_y is y and the delta_phi is phi
@@ -57,42 +63,6 @@ class VehicleDynamics(object):
             punish_yaw_rate = tf.square(rs)
             rewards = 2 * devi_y + 1 * devi_phi + 0.2 * punish_yaw_rate + 0.5 * punish_steer
         return rewards
-
-
-# class ReferencePath(object):
-#     def __init__(self):
-#         self.period = 1200.
-#         self.path_x = self.compute_x_point()
-#         self.path_y = self.compute_path_y(self.path_x)
-#         self.path_phi = self.compute_path_phi(self.path_x)
-#
-#
-#     def compute_path_y(self, x):
-#         y = np.zeros_like(x, dtype=np.float32)
-#         return y
-#
-#     def compute_path_phi(self, x):
-#         deriv = np.zeros_like(x, dtype=np.float32)
-#         return deriv
-#
-#     # def compute_y(self, x, delta_y):
-#     #     y_ref = self.compute_path_y(x)
-#     #     return delta_y + y_ref
-#     #
-#     # def compute_delta_y(self, x, y):
-#     #     y_ref = self.compute_path_y(x)
-#     #     return y - y_ref
-#
-#     # def compute_phi(self, x, delta_phi):
-#     #     phi_ref = self.compute_path_phi(x)
-#     #     phi = delta_phi + phi_ref
-#     #     phi[phi > np.pi] -= 2 * np.pi
-#     #     phi[phi <= -np.pi] += 2 * np.pi
-#     #     return phi
-#
-#     def compute_x_point(self):
-#         x = np.linspace(0., 1000., 10000).astype(np.float32)
-#         return x
 
 
 class PathTrackingModel(object):  # all tensors
