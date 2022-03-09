@@ -19,12 +19,29 @@ class Init_state(object):
         return np.stack(lists_to_stack, axis=1)
 
     def reset(self, **kwargs):
-        init_x = np.random.uniform(0., 100., (self.num_agent,)).astype(np.float32)
+        # init_x = np.random.uniform(0., 100., (self.num_agent,)).astype(np.float32)
+        # init_delta_y = np.random.normal(0, 0.7, (self.num_agent,)).astype(np.float32)  # delta_y \in [-2, 2]
+        # init_delta_phi = np.random.normal(0, np.pi / 9, (self.num_agent,)).astype(np.float32)  # delta_phi \in [-1, 1]
+        # init_delta_v_x = np.random.normal(0, 0.3, (self.num_agent,)).astype(np.float32)  # delta_vx \in [-1, 1]
+        # beta = np.random.normal(0, 0.05, (self.num_agent,)).astype(np.float32)
+        # init_v_y = (init_delta_v_x + self.expect_v) * np.tan(beta) #vy \in [0, 3]
+        # init_r = np.random.normal(0, 0.3, (self.num_agent,)).astype(np.float32)  # r \in [-1, 1]
+        # self.obs = np.stack([init_v_y, init_r, init_delta_y, init_delta_phi, init_x], 1)
+        # return self.obs
+
+        # use for LQR
         init_delta_y = np.random.normal(0, 0.7, (self.num_agent,)).astype(np.float32)  # delta_y \in [-2, 2]
         init_delta_phi = np.random.normal(0, np.pi / 9, (self.num_agent,)).astype(np.float32)  # delta_phi \in [-1, 1]
         init_delta_v_x = np.random.normal(0, 0.3, (self.num_agent,)).astype(np.float32)  # delta_vx \in [-1, 1]
         beta = np.random.normal(0, 0.05, (self.num_agent,)).astype(np.float32)
-        init_v_y = (init_delta_v_x + self.expect_v) * np.tan(beta) #vy \in [0, 3]
+        init_v_y = (init_delta_v_x + self.expect_v) * np.tan(beta)  # vy \in [0, 3]
         init_r = np.random.normal(0, 0.3, (self.num_agent,)).astype(np.float32)  # r \in [-1, 1]
-        self.obs = np.stack([init_v_y, init_r, init_delta_y, init_delta_phi, init_x], 1)
+        self.obs = np.stack([init_v_y, init_r, init_delta_y, init_delta_phi], 1)
+        return self.obs
+
+    def reset_two(self, **kwargs):
+        # use for LQR
+        init_v_y = 4 * np.random.normal(0, 0.3, (self.num_agent,)).astype(np.float32)  # vy \in [0, 3]
+        init_r = 4 * np.random.normal(0, 0.3, (self.num_agent,)).astype(np.float32)  # vy \in [0, 3]
+        self.obs = np.stack([init_v_y, init_r], 1)
         return self.obs
